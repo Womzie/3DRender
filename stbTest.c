@@ -11,18 +11,10 @@
 #define ARRAY_SIZE 20;
 
 const size_t NUM_PIXELS_TO_PRINT = 25U;
-int writeJPG(unsigned char *data, int w, int h){
+int writeJPG(FILE *fptr, unsigned char *data, int w, int h){
     int c = 3;
     int x,y;
-    FILE *fptr;
-    char xyzName[100];
-    printf("Name of new .XYZ file: ");
-        scanf("%s", xyzName);
-        fptr = fopen(xyzName, "w");
-        if(fptr == NULL){
-            printf("ERROR!");
-            exit(1);
-        }
+
     fprintf(fptr,"%d %d \n", w, h);
     for (size_t i = 0; i < w * h * c; i+=c) {
             
@@ -45,18 +37,10 @@ int writeJPG(unsigned char *data, int w, int h){
     return 0;
 }
 
-int writePNG(unsigned char *data, int w, int h){
+int writePNG(FILE *fptr,unsigned char *data, int w, int h){
     int c = 4;
     int x,y;
-    FILE *fptr;
-    char xyzName[100];
-    printf("Name of new .XYZ file: ");
-        scanf("%s", xyzName);
-        fptr = fopen(xyzName, "w");
-        if(fptr == NULL){
-            printf("ERROR!");
-            exit(1);
-        }
+    
     fprintf(fptr,"%d %d \n", w, h);
     for (size_t i = 0; i < w * h * c; i+=c) {
             
@@ -87,23 +71,32 @@ int writePNG(unsigned char *data, int w, int h){
 int main(void) {
     int width, height, comp, x, y;
     double rgb[3];
+    char xyzName[100];
+    FILE *fptr;
     
     char name[100];
     
-    printf("enter name of jpg file\n") ;
+    printf("enter name of .jpg or .png file\n") ;
     scanf("%s",name) ;
 
 
     unsigned char *data = stbi_load(name, &width, &height, &comp, 0);
     if (data) {
         
+        printf("Name of new .XYZ file: ");
+        scanf("%s", xyzName);
+        fptr = fopen(xyzName, "w");
+        if(fptr == NULL){
+            printf("ERROR!");
+            exit(1);
+        }
         printf("width = %d, height = %d, comp = %d (channels)\n", width, height, comp);
         
         if(comp == 3){
-            writeJPG(data, width, height);
+            writeJPG(fptr, data, width, height);
         }
         else if(comp == 4){
-            writePNG(data, width, height);
+            writePNG(fptr, data, width, height);
         }
 
     }
