@@ -131,5 +131,5 @@ int main(void) {
     }
 
     xyzToString(xyzName);
-    return 0;
+    return 1;
 }
