@@ -132,4 +132,6 @@ int main(void) {
 
     xyzToString(xyzName);
     return 1;
+
+    //for some reason doesn't ever quit
 }
