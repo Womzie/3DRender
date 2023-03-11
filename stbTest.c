@@ -1,6 +1,8 @@
 #include <stdio.h>
  
 #define STB_IMAGE_IMPLEMENTATION
+#define STBI_ONLY_JPEG
+
 
 #include "stb_image.h"
 
@@ -72,7 +74,7 @@ int writePNG(FILE *fptr,unsigned char *data, int w, int h){
 }
 
 int xyzToString(char *xyzName){
-    printf("working");
+    //printf("working");
     FILE *fptr;
     int x, y;
     double tr, tg, tb;
@@ -98,7 +100,7 @@ int xyzToString(char *xyzName){
 }
 
 int main(void) {
-    int width, height, comp, x, y;
+    int width, height, comp, x, y, n;
     double rgb[3];
     char xyzName[100];
     FILE *fptr;
@@ -108,7 +110,11 @@ int main(void) {
     printf("enter name of .jpg or .png file\n") ;
     scanf("%s",name) ;
 
-
+    int ok = stbi_info(name, &width, &height, &n);
+    if(ok== 0){
+        printf("unsupported format");
+        return 0;
+    }
     unsigned char *data = stbi_load(name, &width, &height, &comp, 0);
     if (data) {
         

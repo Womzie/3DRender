@@ -24,7 +24,7 @@ struct {
 THING thing[5][810000]  ;
 
 int writePNG(unsigned char *data, int w, int h, int numob){
-  int c = 3;
+  int c = 4;
   int x,y, k ;
   
   size_t i = 0;
@@ -68,7 +68,7 @@ int writePNG(unsigned char *data, int w, int h, int numob){
 }
 
 int writeJPG(unsigned char *data, int w, int h, int numob){
-  int c = 4;
+  int c = 3;
   int x,y, k ;
   
   size_t i = 0;
@@ -98,8 +98,6 @@ int writeJPG(unsigned char *data, int w, int h, int numob){
 
       thing[numob][k].b = hex;
       i++;
-      
-
       
       k++;
 
