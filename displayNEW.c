@@ -16,19 +16,16 @@
 int numoo, gsize[5][2], tp[5];
 double bb,bg,br, xpoints[2][810000], ypoints[2][810000],zpoints[2][810000] ;
 int height[5], width[5];
-typedef
-struct {
+typedef struct {
   double r ;
   double g ;
   double b ;
   double alpha;
-}
-  THING ;
+} THING ;
 
 THING thing[5][810000]  ;
 
 int writePNG(unsigned char *data, int w, int h, int numob){
-  int c = 4;
   int x,y, k ;
   
   size_t i = 0;
@@ -38,7 +35,8 @@ int writePNG(unsigned char *data, int w, int h, int numob){
     for(int x = 0; x < w; x++){
       xpoints[numob][k] = x;
       ypoints[numob][k] = y;
-      zpoints[c][k] = 10;
+      zpoints[numob][k] = 10;
+
       
       
       double hex = data[i];
@@ -74,7 +72,7 @@ int writePNG(unsigned char *data, int w, int h, int numob){
   xpoints[numob][k] = w/2;
   ypoints[numob][k] = h/2;
   //printf("%lf %lf \n", xpoints[numob][k], ypoints[numob][k]);
-  zpoints[c][k]=10;
+  zpoints[numob][k]=10;
   tp[numob] = k;
   //printf("%d \n", tp[numob]);
   return 0;
@@ -82,7 +80,6 @@ int writePNG(unsigned char *data, int w, int h, int numob){
 
 
 int writeJPG(unsigned char *data, int w, int h, int numob){
-  int c = 3;
   int x,y, k ;
   
   size_t i = 0;
@@ -94,7 +91,7 @@ int writeJPG(unsigned char *data, int w, int h, int numob){
     for(int x = 0; x < w; x++){
       xpoints[numob][k] = x;
       ypoints[numob][k] = y;
-      zpoints[c][k] = 10;
+      zpoints[numob][k] = 10;
       
       
       hex = data[i];
@@ -136,7 +133,7 @@ int writeJPG(unsigned char *data, int w, int h, int numob){
   xpoints[numob][k] = w/2;
   ypoints[numob][k] = h/2;
   //printf("%lf %lf \n", xpoints[numob][k], ypoints[numob][k]);
-  zpoints[c][k]=10;
+  zpoints[numob][k]=10;
   tp[numob] = k;
   //printf("%d \n", tp[numob]);
   return 0;
@@ -189,7 +186,10 @@ void draw(){
 	y = ypoints[k][i];
 	z = zpoints[k][i]; //each layer should be farther along the z axis
 	//20 is just a placeholder, we'll need to actually calucalte the right increment at some point
-      
+
+	//printf("%lf %lf %lf \n", x, y, z);
+
+	
 	y1=(y/z);
 	x1=(x/z);
 	x2=((sWIDTH/2)/H)*x1+(sWIDTH/2);
@@ -203,9 +203,7 @@ void draw(){
 	//if (i==tp[k]/2) {printf("%lf %lf\n", x,y);}
 
 
-	//if(thing[k][i].r > 1){
-	  //printf("%lf \n", thing[k][i].r);
-	  //}
+	
 	
 	G_rgb(thing[k][i].r,thing[k][i].g,thing[k][i].b);
 	G_fill_circle(x,y,1);
@@ -233,7 +231,7 @@ void adjust_points(int c){
 
   M3d_mat_mult_points(xpoints[c],ypoints[c], zpoints[c],t1,xpoints[c],ypoints[c],zpoints[c], tp[c]+1);
   M3d_mat_mult_points(xpoints[c],ypoints[c], zpoints[c],s1,xpoints[c],ypoints[c],zpoints[c], tp[c]+1);
-  //M3d_mat_mult_points(xpoints[c],ypoints[c], zpoints[c],t2,xpoints[c],ypoints[c],zpoints[c], tp[c]+1);
+  M3d_mat_mult_points(xpoints[c],ypoints[c], zpoints[c],t2,xpoints[c],ypoints[c],zpoints[c], tp[c]+1);
 
 }
 
