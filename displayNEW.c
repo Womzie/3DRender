@@ -216,8 +216,13 @@ void draw(){
 
 void adjust_points(int c){
   
-  double t1[4][4], s1[4][4], t2[4][4],res[4][4],z[900],sx,sy,r[2];
+  double t1[4][4], s1[4][4], t2[4][4],res[4][4],z[900],sx,sy,r[2], r1[4][4];
+  M3d_make_identity(r1);
   M3d_make_translation(t1, -xpoints[c][tp[c]],-ypoints[c][tp[c]], -10);
+
+  r1[1][1] = -1;
+
+  
   //M3d_make_scaling(s1, gsize[c][0]/800.0,gsize[c][1]/800.0,1);
 
   // M3d_make_translation(t2, 400,400, 10); --right translation for 2d
@@ -230,6 +235,7 @@ void adjust_points(int c){
   //M3d_make_scaling(s1, 0.01,0.01,1);
 
   M3d_mat_mult_points(xpoints[c],ypoints[c], zpoints[c],t1,xpoints[c],ypoints[c],zpoints[c], tp[c]+1);
+  M3d_mat_mult_points(xpoints[c],ypoints[c], zpoints[c],r1,xpoints[c],ypoints[c],zpoints[c], tp[c]+1);
   M3d_mat_mult_points(xpoints[c],ypoints[c], zpoints[c],s1,xpoints[c],ypoints[c],zpoints[c], tp[c]+1);
   M3d_mat_mult_points(xpoints[c],ypoints[c], zpoints[c],t2,xpoints[c],ypoints[c],zpoints[c], tp[c]+1);
 
