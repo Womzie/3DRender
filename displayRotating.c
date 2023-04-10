@@ -1,322 +1,361 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
-#include  "FPToolkit.c"
-#include "M2d_matrix_toolsS.c"
+
+#define STB_IMAGE_IMPLEMENTATION
+
+#include "stb_image.h"
+
+#include "FPToolkit.c"
+#include "M3d_matrix_toolsS.c"
+
+#define sWIDTH 800
+#define sHEIGHT 800
 
 
+int numoo, gsize[5][2], tp[5];
+double bb,bg,br, xpoints[4][810000], ypoints[4][810000],zpoints[4][810000],psize[4] ;
+int height[5], width[5];
+typedef struct {
+  double r ;
+  double g ;
+  double b ;
+  double alpha;
+} THING ;
 
-double mlist[10][59000], y[10][59000],x[10][59000], wcenter[2], wx[59000], wy[59000], polygony[10][59000],polygonx[10][59000], r[10][57500], g[10][57500],b[10][57500], cx[10], cy[10], f[10];
-int psize[10][57500], con[10][57500][20];
-int npt[10],npg[10], wsize,wsw;
+THING thing[5][810000]  ;
 
-int read_file(FILE *w, int c){
-int j =0;
-fscanf(w, "%d", &npt[c]);
-
-for (int i = 0; i < npt[c]; i++){
-fscanf(w, "%lf %lf", &x[c][i], &y[c][i]);
-}
-
-fscanf(w, "%d", &npg[c]);
-
-while (j < npg[c]){
-fscanf(w, "%d", &psize[c][j]);
-for (int k = 0; k < psize[c][j]; k++){
-fscanf(w, "%d", &con[c][j][k]);
-int x = con[c][j][k];
-}
-j++;
-}
-
-for(int k =0; k< npg[c]; k++){
-fscanf(w, "%lf %lf %lf", &r[c][k], &g[c][k], &b[c][k]);
-}
-
-}
-
-int build_poly(int c){
-
-for (int k = 0; k < npg[c]; k++ ){
-
-for (int m = 0; m < psize[c][k]; m++){
-polygonx[c][m] = x[c][con[c][k][m]];
-polygony[c][m] = y[c][con[c][k][m]];
-}
-}
-
-}
-
-
-
-void window_center(){
-wcenter[0]=0;
-wcenter[1]=0;
-for (int i =0; i < wsize; i++){
-wcenter[0] += wx[i];
-wcenter[1] += wy[i];
-}
-wcenter[0]=wcenter[0]/wsize;
-wcenter[1]=wcenter[1]/wsize;
-
-}
-
-
-int in_out (int i, double P[2]){
-
-double b, c,a,cy,cx, cv, pv,cntr[2];
-cx=cy=0;
-int j;
-j = i+1 ; if (j == wsize) j = 0 ;
-
-
-a=  (wy[j]-wy[i]);
-b= -(wx[j]-wx[i]);
-c= -b*wy[i]-a*wx[i];
-
-
-
-cv = a*wcenter[0] + b*wcenter[1] + c;
-pv =  a*P[0] + b*P[1] + c;
-
-if (cv*pv < 0){
-return 0;
-}
-
-return 1;
-
-}
-
-int intersect_2_lines (double A[2], double B[2],
-                       double C[2], double D[2],
-                       double intersection[2]){
-  double a1,b1,a2,b2,c1,c2;
+int writePNG(unsigned char *data, int w, int h, int numob){
+  int x,y, k ;
   
-  a1=-(A[1]-B[1]);
-  b1=A[0]-B[0];
-  a2=-(C[1]-D[1]);
-  b2=C[0]-D[0];
-  c1= -b1*A[1]-a1*A[0];
-  c2= -b2*C[1]-a2*C[0];
+  size_t i = 0;
+  k = 0;
+  for(int y = 0; y < h; y++){
+    
+    for(int x = 0; x < w; x++){
+      xpoints[numob][k] = x;
+      ypoints[numob][k] = y;
+      zpoints[numob][k] = 10+ (numob*20);
+
+      
+      
+      double hex = data[i];
+      hex /= 255;
+      //printf("%lf \n", hex);
+      
+      thing[numob][k].r = hex;
+      i++;
+
+      hex = data[i];
+      hex /= 255;
+
+      thing[numob][k].g = hex;
+      i++;
+
+      hex = data[i];
+      hex /= 255;
+
+      thing[numob][k].b = hex;
+      i++;
+
+      hex = data[i];
+      thing[numob][k].alpha = hex;
+      
+      i++;
+      k++;
+
+      //printf("%d \n", i);
+      
+    }
+  }
   
-  if ((a1*b2-a2*b1)==0){return 0;}
+  xpoints[numob][k] = w/2;
+  ypoints[numob][k] = h/2;
+  //printf("%lf %lf \n", xpoints[numob][k], ypoints[numob][k]);
+  zpoints[numob][k]=10 + (20*numob);
+  tp[numob] = k;
+  //printf("%d \n", tp[numob]);
+  return 0;
+}
+
+
+int writeJPG(unsigned char *data, int w, int h, int numob){
+  int x,y, k ;
   
-  intersection[0]=(c1*b2-c2*b1)/(a2*b1-a1*b2);
-  intersection[1]= (a1*intersection[0] + c1)/-b1;
-  //y = (a1*c2-a2*c1)/(a2*b1-a1*b2)
-  return 1;
+  size_t i = 0;
+  k = 0;
+
+  double hex;
+  for(int y = 0; y < h; y++){
+    
+    for(int x = 0; x < w; x++){
+      xpoints[numob][k] = x;
+      ypoints[numob][k] = y;
+      zpoints[numob][k] = 10 + (20*numob);
+      
+      
+      hex = data[i];
+      hex /= 255;
+      
+      
+      
+      thing[numob][k].r = hex;
+
+      if(thing[numob][k].r > 1){
+	printf("%lf \n", hex);
+
+      }
+      
+      i++;
+
+      hex = data[i];
+      hex /= 255;
+
+      thing[numob][k].g = hex;
+      i++;
+
+      hex = data[i];
+      hex /= 255;
+
+      thing[numob][k].b = hex;
+      i++;
+      
+      thing[numob][k].alpha = 1;
+      
+      
+      k++;
+
+      //printf("%d \n", i);
+      
+    }
+  }
   
+  xpoints[numob][k] = w/2;
+  ypoints[numob][k] = h/2;
+  //printf("%lf %lf \n", xpoints[numob][k], ypoints[numob][k]);
+  zpoints[numob][k]=10 + (20 * numob);
+  tp[numob] = k;
   
+  return 0;
 }
 
-int  window (double px[], double py[], int psize)
 
-{
-int signal[2],k,si,pi,m;
-double p[2],q[2], pwx[100],pwy[100],a[2],b[2],c[2],d[2],intersection[2];
-pi=0;
+void read_file(char name[], int c){
+  int comp, x, y, n;
+  
+  int ok = stbi_info(name, &width[c], &height[c], &n);
+  if(ok == 0){
+    printf("unsupported format");
+    return;
+  }
+  unsigned char *data = stbi_load(name, &width[c], &height[c], &comp, 0);
+  if(data){
+    gsize[c][0] = width[c];
+    gsize[c][1] = height[c];
+  }
 
-for (int i = 0; i < wsize; i++){
-for (int j = 0; j < psize; j++){
-k=j-1; if (k== -1){k=psize-1;}
-//k=0=q
-//j=1=p
-m= i+1; if (m==wsize){m=0;}
-p[0]=px[j]; p[1]=py[j];
-q[0]=px[k]; q[1]=py[k];
-signal[0] = in_out(i,q);
-signal[1] = in_out(i,p);
-
-
-//good to good
-if (signal[0] == 1 && signal[1] == 1 ) {pwx[pi]=px[j]; pwy[pi]=py[j]; pi++;}
-//good to bad
-if (signal[0] == 1 && signal[1] == 0 ) {
-a[0]=px[k]; a[1]=py[k];
-b[0]=px[j]; b[1]=py[j];
-c[0]=wx[i]; c[1]=wy[i];
-d[0]=wx[m]; d[1]=wy[m];
-si = intersect_2_lines(a,b,c,d, intersection);
-if (si == 1){
-pwx[pi]= intersection[0]; pwy[pi] = intersection[1];
-pi++; }
-
-else {pwx[pi]=px[j]; pwy[pi]=py[j];pi++;}
- }
-//bad to good
-if (signal[0] == 0 && signal[1] == 1 ) {
-a[0]=px[k]; a[1]=py[k];
-b[0]=px[j]; b[1]=py[j];
-c[0]=wx[i]; c[1]=wy[i];
-d[0]=wx[m]; d[1]=wy[m];
-si = intersect_2_lines(a,b,c,d, intersection);
-if (si == 1){
-pwx[pi]= intersection[0]; 
-pwy[pi] = intersection[1];pi++;
-}
-else {
-pwx[pi]=px[j]; pwy[pi]=py[j]; pi++;}
-
-pwx[pi]=px[j];
-pwy[pi]=py[j];
-pi++;
-} 
+  if(comp == 3){
+    writeJPG(data, width[c], height[c], c);
+  }
+  else if(comp == 4){
+    writePNG(data, width[c], height[c], c);
+  }
+  else{
+    printf("unsupported format, we only support jpgs");
+  }
+  
 
 }
-  for(int r = 0; r<pi; r++){
-px[r]=pwx[r];
-py[r]=pwy[r];
-}
-psize=pi;
 
-if (i < wsize-1) {pi = 0;}
 
-}
-return pi;
-}
 
-int find_center(int c){
-double gx,gy,lx,ly;
+void draw(){
 
-gx=x[c][0]; lx=x[c][0];
-gy=y[c][0]; ly=y[c][0];
+  double h,H,x,y,z,x1,y1,x2,y2;
+  h=45*(M_PI/180);
+  H = tan(h);
 
-for (int i  = 1; i < npt[c]; i++){
-if (gx < x[c][i]){gx=x[c][i];}
-if (lx > x[c][i]){lx=x[c][i];}
-if (gy < y[c][i]){gy=y[c][i];}
-if (ly > y[c][i]){ly=y[c][i];}
-}
+  //G_rgb(1,0,0);
+  
+  //printf("%d %d \n", numoo, tp[0]);
+  for (int k = 0; k < numoo; k++){
+    for (int i = 0; i < tp[k]; i++){
 
-double xr = gx-lx;
-double yr= gy-ly;
+      if(thing[k][i].alpha > 0){
+	x = xpoints[k][i];
+	y = ypoints[k][i];
+	z = zpoints[k][i]; //each layer should be farther along the z axis
+	//20 is just a placeholder, we'll need to actually calucalte the right increment at some point
 
-cx[c] = (lx + (xr/2));
-cy[c] = (ly + (yr/2));
-f[c] = ((400/xr)+(400/yr))/2; 
-}
+	//printf("%lf %lf %lf \n", x, y, z);
 
-int adjust_points(int c){
-double t1[3][3], s1[3][3], t2[3][3],res[3][3];
+	
+	y1=(y/z);
+	x1=(x/z);
+	x2=((sWIDTH/2)/H)*x1+(sWIDTH/2);
+	y2=((sHEIGHT/2)/H)*y1+(sHEIGHT/2);
 
-M2d_make_translation(t1, -cx[c],-cy[c]);
-M2d_make_scaling(s1, f[c],f[c]);
-M2d_make_translation(t2, 400,400);
+	x = x2;
+	y = y2;
+	// if (i==0) {printf("%lf %lf\n", x,y);}
+	// if (i==1) {printf("%lf %lf\n", x,y);}
+	// if (i==tp[k]-1) {printf("%lf %lf\n", x,y);}
+	//if (i==tp[k]/2) {printf("%lf %lf\n", x,y);}
 
-M2d_mat_mult(res,t2,s1);
-M2d_mat_mult(res,res,t1);
-M2d_mat_mult_points(x[c],y[c],res,x[c],y[c],npt[c]);
-}
 
-int draw(int c){
-int pi=0;
-G_rgb(0,0,0);
-G_clear();
-G_rgb(0,1,0);
-G_fill_rectangle(0,0,800,20);
-G_polygon(wx,wy,wsize);
-for (int k = 0; k < npg[c]; k++ ){
-for (int m = 0; m < psize[c][k]; m++){
+	
 
-polygonx[c][m] = x[c][con[c][k][m]];
-polygony[c][m] = y[c][con[c][k][m]];
-}
-
-pi=psize[c][k];
-if (wsw == 1){pi = window(polygonx[c], polygony[c],psize[c][k]);}
-
-G_rgb(r[c][k],g[c][k],b[c][k]);
-G_fill_polygon(polygonx[c], polygony[c],pi);
+	G_rgb(thing[k][i].r,thing[k][i].g,thing[k][i].b);
+	//G_fill_circle(x,y, psize[k]); //psize = longer side of window / longer side of image. Why is math off??
+    G_fill_rectangle(x-(psize[k]/2),y-(psize[k]/2),psize[k],psize[k]);
+      }
+      
+    }}
 
 }
+
+void find_range(int c, double r[]){
+  double x,y,z,x1,y1,x2,y2,point1[2],point2[2],H,h;
+  h=45*(M_PI/180);
+  H = tan(h);
+  x = xpoints[c][0];
+  y = ypoints[c][0];
+  z = zpoints[c][0]; 
+  y1=(y/z);
+  x1=(x/z);
+  x2=((sWIDTH/2)/H)*x1+(sWIDTH/2);
+  y2=((sWIDTH/2)/H)*y1+(sWIDTH/2);
+
+  point1[0] = x2;
+  point1[1] = y2;
+
+  x = xpoints[c][tp[c]-1];
+  y = ypoints[c][tp[c]-1];
+  z = zpoints[c][tp[c]-1]; 
+  y1=(y/z);
+  x1=(x/z);
+  x2=((sWIDTH/2)/H)*x1+(sWIDTH/2);
+  y2=((sWIDTH/2)/H)*y1+(sWIDTH/2);
+
+  point2[0] = x2;
+  point2[1] = y2;
+  r[0] = point2[0]-point1[0];
+  r[1] = point2[1]-point1[1];
+
+
 }
 
-int rotate(int c, double degrees){
+
+
+void adjust_points(int c){
+  
+  double t1[4][4], s1[4][4], t2[4][4],res[4][4],z[900],sx,sy,r[2], r1[4][4];
+  M3d_make_translation(t1, -xpoints[c][tp[c]],-ypoints[c][tp[c]], -zpoints[c][tp[c]]);
+  M3d_make_identity(r1);
+
+  r1[1][1] = -1;
+  find_range(c, r);
+
+  if (r[0]>r[1]){
+    sx = sy = sWIDTH/r[0]; 
+    psize[c] = ceil(sWIDTH/(gsize[c][0]*1.0)); //size of pixel
+    /*right now all images have their own scaling so they end up the same size regardless of
+    difference in numbers of pixels, once we move to watch images we'll want all images to be
+    scaled the same amount. But if they are actually all the same size (same number of pixels), 
+    then they'll already be scaled the same amount, so no changes in the code are necessary.*/ 
+  }
+  else {
+    sx = sy = sWIDTH/r[1];
+    psize[c] = ceil(sWIDTH/(gsize[c][1]*1.0));
+  }
+
+
+  // M3d_make_translation(t2, 400,400, 10); //right translation for 2d
+  M3d_make_translation(t2, 0,0, zpoints[c][tp[c]]); //right translation for 3d
+
+  // printf("%lf %lf\n", sx,sy);
+  M3d_make_scaling(s1, sx,sy,1);
+  //M3d_make_scaling(s1, 0.01,0.01,1);
+
+  M3d_mat_mult_points(xpoints[c],ypoints[c], zpoints[c],t1,xpoints[c],ypoints[c],zpoints[c], tp[c]+1);
+  M3d_mat_mult_points(xpoints[c],ypoints[c], zpoints[c],r1,xpoints[c],ypoints[c],zpoints[c], tp[c]+1);
+  
+  M3d_mat_mult_points(xpoints[c],ypoints[c], zpoints[c],s1,xpoints[c],ypoints[c],zpoints[c], tp[c]+1);
+  M3d_mat_mult_points(xpoints[c],ypoints[c], zpoints[c],t2,xpoints[c],ypoints[c],zpoints[c], tp[c]+1);
+
+}
+
+void minute(){
+int c = 2;
 int temp;
-double rotate[3][3], t1[3][3],t2[3][3];
-double r = degrees * M_PI/180;
+double rotate[4][4], t1[4][4],t2[4][4],cs,sn;
+double r = -2 * M_PI/180;
+cs = cos(r); sn = sin(r);
+M3d_make_translation(t1, -xpoints[c][tp[c]],-ypoints[c][tp[c]],-zpoints[c][tp[c]]);
 
-M2d_make_translation(t1, -400,-400);
-M2d_make_rotation(rotate, r); 
-M2d_make_translation(t2, 400,400);
+M3d_make_z_rotation_cs(rotate, cs,sn);
+M3d_make_translation(t2, xpoints[c][tp[c]],ypoints[c][tp[c]],zpoints[c][tp[c]]);
 
-M2d_mat_mult(t2,t2,rotate);
-M2d_mat_mult(t2, t2,t1);
-M2d_mat_mult_points(x[c],y[c],t2,x[c],y[c],npt[c]);
-
-}
-
-
-
-int stretch(int c, double dx, double dy){
-double s[3][3];
-M2d_make_scaling(s, dx,dy);
-M2d_mat_mult_points(x[c], y[c], s, x[c],y[c],npt[c]);
+M3d_mat_mult(t2,t2,rotate);
+M3d_mat_mult(t2, t2,t1);
+M3d_mat_mult_points(xpoints[c],ypoints[c],zpoints[c],t2,xpoints[c],ypoints[c],zpoints[c],tp[c]+1);
 
 }
 
-int translate(int c, int dx, int dy){
-double t[3][3];
-M2d_make_translation(t, dx,dy);
-M2d_mat_mult_points(x[c], y[c], t, x[c],y[c],npt[c]);
+void hour(){
+  int c = 1;
+int temp;
+double rotate[4][4], t1[4][4],t2[4][4],cs,sn;
+double r = (-2.0/12.0) * M_PI/180;
+cs = cos(r); sn = sin(r);
+M3d_make_translation(t1, -xpoints[c][tp[c]],-ypoints[c][tp[c]],-zpoints[c][tp[c]]);
+
+M3d_make_z_rotation_cs(rotate, cs,sn);
+M3d_make_translation(t2, xpoints[c][tp[c]],ypoints[c][tp[c]],zpoints[c][tp[c]]);
+
+M3d_mat_mult(t2,t2,rotate);
+M3d_mat_mult(t2, t2,t1);
+M3d_mat_mult_points(xpoints[c],ypoints[c],zpoints[c],t2,xpoints[c],ypoints[c],zpoints[c],tp[c]+1);
+
 }
+
 
 
 int main(int argc, char **argv) {
-wsize = 0; 
-wsw=0;
-char list[10][100];
-int noo,i,c, key, num;
-double point[2];
-c=0;
-i=1;
-num= 0;
-noo = argc;
-key = 'a';
 
-if (argc>10){printf("too many objects.\n"); exit(0);}
+  char list[10][100];
+  int i, key;
+  double br, bg,bb;
+  i=1;
+  
 
-while (i < argc){
-FILE *w;
-w=fopen(argv[i], "r");
-if (w==NULL){printf("unable to open file.\n"); exit(0);}
-read_file(w,c);
-find_center(c);
-adjust_points(c);
-c++;
-i++;
+  if (argc>5){printf("too many objects.\n"); exit(0);}
+
+  while (i < argc){
+    read_file(argv[i],i-1);
+    adjust_points(i-1);
+    //printf("adjust points, succeeds \n");
+    i++;
+  }
+  numoo = argc-1;
+  
+  // printf("what is the background color?\n");
+  // scanf("%lf %lf %lf", &br,&bg,&bb);
+
+
+  G_init_graphics (sWIDTH,sHEIGHT);
+  G_rgb(1,0,0);
+  G_clear();
+  draw();
+  G_wait_key();
+  while (key!='q'){
+    G_rgb(1,0,0);
+    G_clear();
+    hour();
+    minute();
+    draw();
+    key = G_wait_key();
+
+  }
+  
 }
-
-G_init_graphics (800,800);
-
-
-draw(num);
-
-G_wait_click(point);
-while (point[1] < 20){G_wait_click(point);}
-
-while (point[1] > 20){
-wx[wsize]= point[0];
-wy[wsize]= point[1];
-wsize++;
-G_wait_click(point);
-}
-wsw= 1;
-G_rgb(0,1,0);
-G_polygon(wx,wy,wsize);
-window_center();
-
-while (key != 'q'){
-key = G_wait_key();
-if (key == 'r'){rotate(num,2);}
-if (key == 's'){stretch(num, 0.9,0.9);}
-if (key == 't'){translate(num,5,5);}
-if (key >='0' && key < noo + '0'-1){
-num = key-'0';}
-//window(num);
-draw(num);
-}
-
-
-}
-
