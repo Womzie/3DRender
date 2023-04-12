@@ -170,5 +170,3 @@ draw();
 G_wait_key();
 //will eventually need to rotate 2nd and 3rd layers about the z axis at the right rate of speed.
 
-
-}
