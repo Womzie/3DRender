@@ -12,6 +12,8 @@
 #define sWIDTH 800
 #define sHEIGHT 800
 
+#define PI 3.14159
+
 
 int numoo, gsize[5][2], tp[5];
 double bb,bg,br, xpoints[4][810000], ypoints[4][810000],zpoints[4][810000],psize[4] ;
@@ -172,7 +174,7 @@ void read_file(char name[], int c){
 void draw(){
 
   double h,H,x,y,z,x1,y1,x2,y2;
-  h=45*(M_PI/180);
+  h=45*(PI/180);
   H = tan(h);
 
   //G_rgb(1,0,0);
@@ -216,7 +218,7 @@ void draw(){
 
 void find_range(int c, double r[]){
   double x,y,z,x1,y1,x2,y2,point1[2],point2[2],H,h;
-  h=45*(M_PI/180);
+  h=45*(PI/180);
   H = tan(h);
   x = xpoints[c][0];
   y = ypoints[c][0];
@@ -254,6 +256,7 @@ void adjust_points(int c){
   M3d_make_identity(r1);
 
   r1[1][1] = -1;
+  
   find_range(c, r);
 
   if (r[0]>r[1]){
@@ -289,7 +292,7 @@ void minute(){
 int c = 2;
 int temp;
 double rotate[4][4], t1[4][4],t2[4][4],cs,sn;
-double r = -2 * M_PI/180;
+double r = -2 * PI/180;
 cs = cos(r); sn = sin(r);
 M3d_make_translation(t1, -xpoints[c][tp[c]],-ypoints[c][tp[c]],-zpoints[c][tp[c]]);
 
@@ -306,7 +309,7 @@ void hour(){
   int c = 1;
 int temp;
 double rotate[4][4], t1[4][4],t2[4][4],cs,sn;
-double r = (-2.0/12.0) * M_PI/180;
+double r = (-2.0/12.0) * PI/180;
 cs = cos(r); sn = sin(r);
 M3d_make_translation(t1, -xpoints[c][tp[c]],-ypoints[c][tp[c]],-zpoints[c][tp[c]]);
 
