@@ -207,8 +207,7 @@ void draw(){
 	
 	
 	G_rgb(thing[k][i].r,thing[k][i].g,thing[k][i].b);
-	G_fill_circle(x,y,psize[k]*1.5); //psize = longer side of window / longer side of image. Why is math off??
-    //G_fill_circle(x,y,1);
+	G_fill_rectangle(x-(psize[k]/2),y-(psize[k]/2),psize[k],psize[k]);
       }
       
     }
@@ -261,11 +260,11 @@ void adjust_points(int c){
 
   if (r[0]>r[1]){
     sx = sy = sWIDTH/r[0];
-    psize[c] = sWIDTH/(gsize[0][0]*1.0);
+    psize[c] = ceil(sWIDTH/(gsize[c][0]*1.0));
   }
   else {
     sx = sy = sWIDTH/r[1];
-    psize[c] = sWIDTH/(gsize[0][1]*1.0);
+    psize[c] = ceil(sWIDTH/(gsize[c][1]*1.0));
   }
 
 
