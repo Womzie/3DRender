@@ -37,7 +37,7 @@ int writePNG(unsigned char *data, int w, int h, int numob){
     for(int x = 0; x < w; x++){
       xpoints[numob][k] = x;
       ypoints[numob][k] = y;
-      zpoints[numob][k] = 10+ (numob*20);
+      zpoints[numob][k] = 70 - (numob*20);
 
       
       
@@ -74,7 +74,7 @@ int writePNG(unsigned char *data, int w, int h, int numob){
   xpoints[numob][k] = w/2;
   ypoints[numob][k] = h/2;
   //printf("%lf %lf \n", xpoints[numob][k], ypoints[numob][k]);
-  zpoints[numob][k]=10 + (20*numob);
+  zpoints[numob][k]= 70 - (20*numob);
   tp[numob] = k;
   //printf("%d \n", tp[numob]);
   return 0;
@@ -93,7 +93,7 @@ int writeJPG(unsigned char *data, int w, int h, int numob){
     for(int x = 0; x < w; x++){
       xpoints[numob][k] = x;
       ypoints[numob][k] = y;
-      zpoints[numob][k] = 10 + (20*numob);
+      zpoints[numob][k] = 70 - (20*numob);
       
       
       hex = data[i];
@@ -135,7 +135,7 @@ int writeJPG(unsigned char *data, int w, int h, int numob){
   xpoints[numob][k] = w/2;
   ypoints[numob][k] = h/2;
   //printf("%lf %lf \n", xpoints[numob][k], ypoints[numob][k]);
-  zpoints[numob][k]=10 + (20 * numob);
+  zpoints[numob][k]= 70 - (20 * numob);
   tp[numob] = k;
   
   return 0;
@@ -188,9 +188,7 @@ void draw(){
 	y = ypoints[k][i];
 	z = zpoints[k][i]; //each layer should be farther along the z axis
 	//20 is just a placeholder, we'll need to actually calucalte the right increment at some point
-
-	//printf("%lf %lf %lf \n", x, y, z);
-
+  
 	
 	y1=(y/z);
 	x1=(x/z);
@@ -212,7 +210,9 @@ void draw(){
     G_fill_rectangle(x-(psize[k]/2),y-(psize[k]/2),psize[k],psize[k]);
       }
       
-    }}
+    }
+    
+  }
 
 }
 

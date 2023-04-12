@@ -23,7 +23,7 @@ double tr,tg,tb;
 //take in number of pixels (should be first thing in each file, x pixels then y pixels)
 fscanf(w, "%d", &gsize[c][0]);
 fscanf(w, "%d", &gsize[c][1]);
-gsize[c][0] = gsize[c][1] = 600;
+//gsize[c][0] = gsize[c][1] = 600;
 
 int k = 0;
 //go through each pixel and take the rgb info and add it to list
@@ -170,5 +170,3 @@ draw();
 G_wait_key();
 //will eventually need to rotate 2nd and 3rd layers about the z axis at the right rate of speed.
 
-
-}
