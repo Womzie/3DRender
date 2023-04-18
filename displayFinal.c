@@ -447,7 +447,7 @@ int main(int argc, char **argv) {
   int i, key;
   double br, bg,bb;
   i=1;
-  h = 45 *(M_PI/180);
+  h = 45 *(PI/180);
   h = tan(h);
   L[0]=0;
   L[1]=0;
