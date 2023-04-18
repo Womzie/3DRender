@@ -398,12 +398,11 @@ void adjust_points(int c){
   M3d_make_scaling(s1, sx,sy,1);
   //M3d_make_scaling(s1, 0.01,0.01,1);
 
-  M3d_mat_mult_points(xpoints[c],ypoints[c], zpoints[c],t1,xpoints[c],ypoints[c],zpoints[c], tp[c]+1);
-  M3d_mat_mult_points(xpoints[c],ypoints[c], zpoints[c],r1,xpoints[c],ypoints[c],zpoints[c], tp[c]+1);
-  
-  M3d_mat_mult_points(xpoints[c],ypoints[c], zpoints[c],s1,xpoints[c],ypoints[c],zpoints[c], tp[c]+1);
-  M3d_mat_mult_points(xpoints[c],ypoints[c], zpoints[c],t2,xpoints[c],ypoints[c],zpoints[c], tp[c]+1);
+  M3d_mat_mult(r1, r1, t1);
+  M3d_mat_mult(s1, s1, r1);
+  M3d_mat_mult(t2, t2,s1);
 
+  M3d_mat_mult_points(xpoints[c],ypoints[c], zpoints[c],t2,xpoints[c],ypoints[c],zpoints[c], tp[c]+1);
 }
 
 void minute(){
