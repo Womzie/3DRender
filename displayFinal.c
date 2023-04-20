@@ -291,7 +291,7 @@ void draw(){
   h=45*(PI/180);
   H = tan(h);
 
-  //G_rgb(1,0,0);
+  //G_rgb(0,0,0);
   
   //printf("%d %d \n", numoo, tp[0]);
   for (int k = 0; k < numoo; k++){
@@ -472,12 +472,12 @@ int main(int argc, char **argv) {
 
 
   G_init_graphics (sWIDTH,sHEIGHT);
-  G_rgb(1,0,0);
+  G_rgb(0,0,0);
   G_clear();
   draw();
   G_wait_key();
   while (key!='q'){
-    G_rgb(1,0,0);
+    G_rgb(0,0,0);
     G_clear();
     hour();
     minute();
